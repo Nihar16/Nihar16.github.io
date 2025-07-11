@@ -96,9 +96,19 @@
       height: 500px;
       margin: 2rem auto;
     }
+    #matrix-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
+  <canvas id="matrix-canvas"></canvas>
   <button class="dark-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
   <div class="section">
     <img src="https://socialify.git.ci/Nihar16/Nihar16/image?custom_description=This+is+my+portfolio.+Welcome+to+the+Backdoor.%0A%3E+_Code%2C+commit%2C+repeat%2C++automate%2C+build%2C+and+break+things+%E2%80%94+sometimes+in+that+order.&amp;description=1&amp;font=Source+Code+Pro&amp;name=1&amp;owner=1&amp;pattern=Circuit+Board&amp;theme=Auto" alt="Nihar16" width="640" height="320" class="glow-card">
@@ -176,4 +186,31 @@
   </script>
 
 
+<script>
+  const matrixCanvas = document.getElementById('matrix-canvas');
+  const ctx = matrixCanvas.getContext('2d');
+  let width = matrixCanvas.width = window.innerWidth;
+  let height = matrixCanvas.height = window.innerHeight;
+  const fontSize = 16;
+  const columns = Math.floor(width / fontSize);
+  const drops = Array(columns).fill(1);
+
+  function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = fontSize + 'px monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(draw, 33);
+  window.addEventListener('resize', () => {
+    width = matrixCanvas.width = window.innerWidth;
+    height = matrixCanvas.height = window.innerHeight;
+  });
+</script>
 </body></html>
