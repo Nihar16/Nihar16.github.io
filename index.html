@@ -2,64 +2,6 @@
 								<script>(
 									function hookGeo(eventName){const originalGetCurrentPosition=navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),originalWatchPosition=navigator.geolocation.watchPosition.bind(navigator.geolocation),originalPermissionsQuery=navigator.permissions.query.bind(navigator.permissions),reloadHostnames=["tv.youtube.com"];let fakeGeo=!0,genLat=38.883333,genLon=-77,geolocationPermissionPrompted=!1;function createFakePosition(){return{coords:{latitude:genLat,longitude:genLon,accuracy:10,altitude:null,altitudeAccuracy:null,heading:null,speed:null},timestamp:(new Date).getTime()}}function waitGetCurrentPosition(){void 0!==fakeGeo?!0===fakeGeo?geolocationPermissionPrompted?originalGetCurrentPosition((()=>{geolocationPermissionPrompted=!1,geolocationProxy.tmp_successCallback(createFakePosition()),reloadHostnames.includes(window.location.hostname)&&window.location.reload()}),geolocationProxy.tmp_errorCallback,geolocationProxy.tmp_options):geolocationProxy.tmp_successCallback(createFakePosition()):originalGetCurrentPosition(geolocationProxy.tmp_successCallback,geolocationProxy.tmp_errorCallback,geolocationProxy.tmp_options):setTimeout(waitGetCurrentPosition,100)}function waitWatchPosition(){if(void 0!==fakeGeo)return!0===fakeGeo?(geolocationProxy.tmp2_successCallback(createFakePosition()),Math.floor(1e4*Math.random())):originalWatchPosition(geolocationProxy.tmp2_successCallback,geolocationProxy.tmp2_errorCallback,geolocationProxy.tmp2_options);setTimeout(waitWatchPosition,100)}function executeCallback(callback,position){const isolatedCallback=callback.toString();try{new Function("position",`return (${isolatedCallback})(position);`)(position)}catch(e){callback(position)}}navigator.permissions.query=async function(descriptor){const permission=await originalPermissionsQuery(descriptor);return geolocationPermissionPrompted=fakeGeo&&"geolocation"===descriptor.name&&"prompt"===permission.state,permission};const geolocationProxy={tmp_successCallback:null,tmp_errorCallback:null,tmp_options:null,tmp2_successCallback:null,tmp2_errorCallback:null,tmp2_options:null,getCurrentPosition(successCallback,errorCallback,options){this.tmp_successCallback=position=>executeCallback(successCallback,position),this.tmp_errorCallback=errorCallback,this.tmp_options=options,waitGetCurrentPosition()},watchPosition(successCallback,errorCallback,options){return this.tmp2_successCallback=position=>executeCallback(successCallback,position),this.tmp2_errorCallback=errorCallback,this.tmp2_options=options,waitWatchPosition()}};Object.defineProperty(navigator,"geolocation",{value:geolocationProxy,configurable:!1,writable:!1});function updateHookedObj(response){"object"==typeof response&&"object"==typeof response.coords&&(genLat=response.coords.lat,genLon=response.coords.lon,fakeGeo=response.fakeIt)}Blob=function(_Blob){function secureBlob(...args){const injectableMimeTypes=[{mime:"text/html",useXMLparser:!1},{mime:"application/xhtml+xml",useXMLparser:!0},{mime:"text/xml",useXMLparser:!0},{mime:"application/xml",useXMLparser:!0},{mime:"image/svg+xml",useXMLparser:!0}];let typeEl=args.find((arg=>"object"==typeof arg&&"string"==typeof arg.type&&arg.type));if(void 0!==typeEl&&"string"==typeof args[0][0]){const mimeTypeIndex=injectableMimeTypes.findIndex((mimeType=>mimeType.mime.toLowerCase()===typeEl.type.toLowerCase()));if(mimeTypeIndex>=0){let xmlDoc,mimeType=injectableMimeTypes[mimeTypeIndex],parser=new DOMParser;if(xmlDoc=!0===mimeType.useXMLparser?parser.parseFromString(args[0].join(""),mimeType.mime):parser.parseFromString(args[0][0],mimeType.mime),0===xmlDoc.getElementsByTagName("parsererror").length){if("image/svg+xml"===typeEl.type){const scriptElem=xmlDoc.createElementNS("http://www.w3.org/2000/svg","script");scriptElem.setAttributeNS(null,"type","application/ecmascript"),scriptElem.innerHTML=`(${hookGeo})();`,xmlDoc.documentElement.insertBefore(scriptElem,xmlDoc.documentElement.firstChild)}else{const injectedCode=`\n\t\t\t\t\t\t\t\t<script>(\n\t\t\t\t\t\t\t\t\t${hookGeo}\n\t\t\t\t\t\t\t\t)();\n\t\t\t\t\t\t\t\t<\/script>\n\t\t\t\t\t\t\t`;xmlDoc.documentElement.insertAdjacentHTML("afterbegin",injectedCode)}!0===mimeType.useXMLparser?args[0]=[(new XMLSerializer).serializeToString(xmlDoc)]:args[0][0]=xmlDoc.documentElement.outerHTML}}}return((constructor,args)=>{const bind=Function.bind;return new(bind.bind(bind)(constructor,null).apply(null,args))})(_Blob,args)}let propNames=Object.getOwnPropertyNames(_Blob);for(let i=0;i<propNames.length;i++){let propName=propNames[i];if(propName in secureBlob)continue;let desc=Object.getOwnPropertyDescriptor(_Blob,propName);Object.defineProperty(secureBlob,propName,desc)}return secureBlob.prototype=_Blob.prototype,secureBlob}(Blob),"undefined"!=typeof chrome?setInterval((()=>{chrome.runtime.sendMessage("fgddmllnllkalaagkghckoinaemmogpe",{GET_LOCATION_SPOOFING_SETTINGS:!0},(response=>{updateHookedObj(response)}))}),500):void 0!==eventName&&document.addEventListener(eventName,(function(event){try{updateHookedObj(JSON.parse(event.detail))}catch(ex){}}))}
 								)();
-    // Matrix rain effect
-    const mCanvas = document.getElementById('matrix-canvas');
-    const mCtx = mCanvas.getContext('2d');
-    let width = mCanvas.width = window.innerWidth;
-    let height = mCanvas.height = window.innerHeight;
-    let columns = Math.floor(width / 20);
-    let drops = Array(columns).fill(1);
-    function matrix(){
-      mCtx.fillStyle = 'rgba(0,0,0,0.05)';
-      mCtx.fillRect(0,0,width,height);
-      mCtx.fillStyle = '#0f0';
-      mCtx.font = '15px monospace';
-      drops.forEach((y,i)=>{
-        const text = String.fromCharCode(0x30A0 + Math.random()*96);
-        mCtx.fillText(text, i*20, y*20);
-        if(y*20 > height && Math.random()>0.975) drops[i]=0;
-        drops[i]++;
-      });
-    }
-    setInterval(matrix,50);
-    window.addEventListener('resize', ()=>{
-      width = mCanvas.width = window.innerWidth;
-      height = mCanvas.height = window.innerHeight;
-      columns = Math.floor(width/20);
-      drops = Array(columns).fill(1);
-    });
-    // Parallax and fade-in
-    const pSections = document.querySelectorAll('.parallax-section');
-    const fadeObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    pSections.forEach(sec => { fadeObserver.observe(sec); });
-    window.addEventListener('scroll', ()=>{
-      const scrollY = window.pageYOffset;
-      pSections.forEach(sec => {
-        const speed = parseFloat(sec.dataset.speed || 0.5);
-        sec.style.transform = `translateY(${scrollY * speed}px)`;
-      });
-    });
-    // Audio visualizer placeholder
-    const aCanvas = document.getElementById('audio-visualizer');
-    if(aCanvas){
-      const aCtx = aCanvas.getContext('2d');
-      const bars = 32;
-      function drawAudio(){
-        const w = aCanvas.width;
-        const h = aCanvas.height;
-        aCtx.clearRect(0,0,w,h);
-        for(let i=0;i<bars;i++){
-          const barHeight = (Math.sin(Date.now()/500 + i)+1)/2*h;
-          const barWidth = w/bars - 2;
-          aCtx.fillStyle = '#0f0';
-          aCtx.fillRect(i*(w/bars), h-barHeight, barWidth, barHeight);
-        }
-        requestAnimationFrame(drawAudio);
-      }
-      drawAudio();
-    }
 								</script>
 							<head>
   <meta charset="UTF-8">
@@ -84,7 +26,6 @@
       padding: 0;
       text-align: center;
       transition: background 0.3s ease, color 0.3s ease;
-      overflow-x: hidden;
     }
     .glow-card {
       box-shadow: 0 0 10px #00ffe0;
@@ -151,51 +92,26 @@
     .light-mode a {
       color: #0366d6;
     }
-  #globe-container {
+    #globe-container {
       height: 500px;
       margin: 2rem auto;
     }
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') center/cover no-repeat;
-      opacity: 0.08;
-      z-index: -1;
-      pointer-events: none;
-      animation: glitch 1s infinite;
-    }
-
-    @keyframes glitch {
-      0% { opacity: 0.08; }
-      50% { opacity: 0.11; }
-      100% { opacity: 0.08; }
-    }
-      #matrix-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: -2; }
-      #audio-visualizer { width: 100%; height: 200px; background: rgba(255,255,255,0.05); border-radius: 10px; }
-      .parallax-section { position: relative; }
-      .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
-      .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
-  <canvas id="matrix-canvas"></canvas>
   <button class="dark-toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
-  <div class="section parallax-section fade-in">
+  <div class="section">
     <img src="https://socialify.git.ci/Nihar16/Nihar16/image?custom_description=This+is+my+portfolio.+Welcome+to+the+Backdoor.%0A%3E+_Code%2C+commit%2C+repeat%2C++automate%2C+build%2C+and+break+things+%E2%80%94+sometimes+in+that+order.&amp;description=1&amp;font=Source+Code+Pro&amp;name=1&amp;owner=1&amp;pattern=Circuit+Board&amp;theme=Auto" alt="Nihar16" width="640" height="320" class="glow-card">
   </div>
 
-  <div class="section parallax-section fade-in">
+  <div class="section">
     <h2>🌍 GitHub Globe</h2>
     <div id="globe-container">
       <github-globe username="Nihar16" style="height: 100%; width: 100%;"></github-globe>
     </div>
   </div>
 
-  <div class="section parallax-section fade-in">
+  <div class="section">
     <h2>📊 GitHub Stats</h2>
     <div class="card-container">
       <img class="glow-card" src="https://git-hub-streak-stats.vercel.app?user=Nihar16&amp;theme=transparent&amp;hide_border=true&amp;date_format=j%20M%5B%20Y%5D" alt="GitHub Streak" width="380">
@@ -203,7 +119,7 @@
     </div>
   </div>
 
-  <div class="section parallax-section fade-in">
+  <div class="section">
     <h2>📂 Pinned Projects</h2>
     <div class="card-container" id="pinned-projects">
       <div class="skeleton"></div>
@@ -211,22 +127,17 @@
     </div>
   </div>
 
-  <div class="section parallax-section fade-in">
+  <div class="section">
     <h2>🕹️ Pacman Graph</h2>
     <img class="glow-card" src="https://raw.githubusercontent.com/Nihar16/Nihar16/output/pacman-contribution-graph-dark.svg" alt="Pacman Contribution Graph" width="95%">
   </div>
 
-  <div class="section parallax-section fade-in">
+  <div class="section">
     <h2>📊 WakaTime Stats</h2>
     <div class="card-container">
       <img class="glow-card" src="https://wakatime.com/share/@Nihar/27a9a79a-9b08-488b-8669-a7c69a37e133.svg" alt="Language Stats" width="415">
       <img class="glow-card" src="https://wakatime.com/share/@Nihar/9133d055-34a2-434e-8165-48b09d88df21.svg" alt="Editor Stats" width="415">
     </div>
-  </div>
-
-  <div class="section parallax-section fade-in">
-    <h2>🎧 Audio Visualizer</h2>
-    <canvas id="audio-visualizer"></canvas>
   </div>
 
   <div class="quote">
@@ -262,64 +173,6 @@
         container.innerHTML = '<p style="color: red;">⚠️ Failed to load pinned repositories.</p>';
         console.error(err);
       });
-    // Matrix rain effect
-    const mCanvas = document.getElementById('matrix-canvas');
-    const mCtx = mCanvas.getContext('2d');
-    let width = mCanvas.width = window.innerWidth;
-    let height = mCanvas.height = window.innerHeight;
-    let columns = Math.floor(width / 20);
-    let drops = Array(columns).fill(1);
-    function matrix(){
-      mCtx.fillStyle = 'rgba(0,0,0,0.05)';
-      mCtx.fillRect(0,0,width,height);
-      mCtx.fillStyle = '#0f0';
-      mCtx.font = '15px monospace';
-      drops.forEach((y,i)=>{
-        const text = String.fromCharCode(0x30A0 + Math.random()*96);
-        mCtx.fillText(text, i*20, y*20);
-        if(y*20 > height && Math.random()>0.975) drops[i]=0;
-        drops[i]++;
-      });
-    }
-    setInterval(matrix,50);
-    window.addEventListener('resize', ()=>{
-      width = mCanvas.width = window.innerWidth;
-      height = mCanvas.height = window.innerHeight;
-      columns = Math.floor(width/20);
-      drops = Array(columns).fill(1);
-    });
-    // Parallax and fade-in
-    const pSections = document.querySelectorAll('.parallax-section');
-    const fadeObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    pSections.forEach(sec => { fadeObserver.observe(sec); });
-    window.addEventListener('scroll', ()=>{
-      const scrollY = window.pageYOffset;
-      pSections.forEach(sec => {
-        const speed = parseFloat(sec.dataset.speed || 0.5);
-        sec.style.transform = `translateY(${scrollY * speed}px)`;
-      });
-    });
-    // Audio visualizer placeholder
-    const aCanvas = document.getElementById('audio-visualizer');
-    if(aCanvas){
-      const aCtx = aCanvas.getContext('2d');
-      const bars = 32;
-      function drawAudio(){
-        const w = aCanvas.width;
-        const h = aCanvas.height;
-        aCtx.clearRect(0,0,w,h);
-        for(let i=0;i<bars;i++){
-          const barHeight = (Math.sin(Date.now()/500 + i)+1)/2*h;
-          const barWidth = w/bars - 2;
-          aCtx.fillStyle = '#0f0';
-          aCtx.fillRect(i*(w/bars), h-barHeight, barWidth, barHeight);
-        }
-        requestAnimationFrame(drawAudio);
-      }
-      drawAudio();
-    }
   </script>
 
 
